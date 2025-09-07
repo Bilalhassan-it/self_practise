@@ -1,0 +1,112 @@
+                                   NAME MANGLING IN PYTHON:
+
+Jab hum kisi variable ya method ka naam double underscore __ se shuru karte hain, Python uska naam secretly change (mangle) kar deta hai taake wo bahar ya subclasses se direct access na ho.
+Iska purpose accidental overwrite se bachana hota hai, lekin chaahe to hum _ClassName__var likh k access kar sakte hain.
+
+In Python, when you define an attribute/method with **two leading underscores** (`__name`) but **no trailing underscores**, Python *mangles* (changes) its name internally to prevent accidental access from outside or subclasses.
+
+It does this by renaming it to:
+
+```
+_ClassName__methodName
+```
+
+This is not true “private”, but it helps avoid accidental overwriting in subclasses.
+
+---
+
+### 🔹 Short Example
+
+```python
+class Student:
+    def __init__(self, name):
+        self.__name = name   # private-like attribute
+
+    def __secret_method(self):   # private-like method
+        return f"Hello, {self.__name}"
+
+    def reveal(self):           # public method
+        return self.__secret_method()
+
+obj = Student("Bilal")
+
+# Direct access fails
+# print(obj.__name)            # ❌ AttributeError
+# print(obj.__secret_method()) # ❌ AttributeError
+
+# Correct way: use public method
+print(obj.reveal())             # ✅ Hello, Bilal
+
+# But you can still access using *name mangling*
+print(obj._Student__name)        # ✅ Bilal
+print(obj._Student__secret_method())  # ✅ Hello, Bilal
+```
+
+---
+
+### ✅ Output
+
+```
+Hello, Bilal
+Bilal
+Hello, Bilal
+```
+
+---
+
+👉 In short: **Name mangling** = Python changes `__var` into `_ClassName__var` to avoid accidental conflicts.
+
+Do you want me to also compare it quickly with **single underscore `_var`** (protected) so you clearly see the difference?
+
+📌 Easy One-Line Definition (Folder ke liye)
+
+👉 “Name Mangling = Jab Python __var ko secretly rename karke _ClassName__var bana deta hai taake wo accidental overwrite se bache.”
+
+
+
+Perfect 👍
+Yeh rahi **chart-style summary** jo aap apne folder pe chipka lo for quick revision 👇
+
+---
+
+# 🔑 Python Access Modifiers & Name Mangling
+
+| Type                        | Syntax  | Access          | Example               | Notes                                                                        |
+| --------------------------- | ------- | --------------- | --------------------- | ---------------------------------------------------------------------------- |
+| **Public**                  | `var`   | Free access     | `obj.var`             | Sab jagah access ho sakta hai                                                |
+| **Protected**               | `_var`  | Convention only | `obj._var`            | Sirf class + subclasses ke liye (outside bhi possible but *not recommended*) |
+| **Private (Name Mangling)** | `__var` | Hidden          | `obj._ClassName__var` | Python internally rename karke `_ClassName__var` bana deta hai               |
+
+---
+
+## 📌 Example
+
+```python
+class Student:
+    def __init__(self):
+        self.name = "Public"       # Public
+        self._roll = 123           # Protected
+        self.__marks = 95          # Private (Name Mangled)
+
+s = Student()
+
+print(s.name)        # ✅ Public
+print(s._roll)       # ✅ 123 (but protected, avoid direct use)
+# print(s.__marks)   # ❌ Error
+print(s._Student__marks)  # ✅ 95 (via name mangling)
+```
+
+---
+
+## 📌 Easy Definition
+
+👉 *“Name Mangling = Jab Python double underscore (`__var`) ko internally `_ClassName__var` bana deta hai, taake variable/method accidentally overwrite na ho.”*
+
+---
+
+⚡ Ye table + example rakho folder me → turant samajh aajayega revision time pe.
+
+Kya chaho mai iska **diagram (memory-map style)** bhi bana du jisme dikhayun `__var` rename hoke `_ClassName__var` ban jata hai?
+
+
+
